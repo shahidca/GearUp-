@@ -1,12 +1,9 @@
 import { Router } from "express";
+import { AuthRoutes } from "../modules/Auth/auth.route";
+
 
 const router = Router();
 
-router.get("/", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "Welcome to GearUp API v1",
-  });
-});
+router.use("/auth", AuthRoutes);
 
 export default router;
