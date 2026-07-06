@@ -13,7 +13,7 @@ const envConfig = {
 
   JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET!,
 
-  JWT_ACCESS_EXPIRES_IN: process.env.JWT_ACCESS_EXPIRES_IN || "7d",
+  JWT_ACCESS_EXPIRES_IN: process.env.JWT_ACCESS_EXPIRES_IN! || "7d",
 
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY!,
 
