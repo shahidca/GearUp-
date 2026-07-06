@@ -1,3 +1,3 @@
-export { default as AppError } from "./AppError";
+export { default as handleGenericError } from "./handleGenericError";
 export { default as handlePrismaError } from "./handlePrismaError";
-export { default as handleValidationError } from "./handleValidationError";
+export { default as handleZodError } from "./handleZodError";

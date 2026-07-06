@@ -1,13 +1,30 @@
 import { Prisma } from "@prisma/client";
-import { IGenericErrorResponse } from "../interfaces";
+import { StatusCodes } from "http-status-codes";
+
+import type { TGenericErrorResponse } from "./error.interface";
 
 const handlePrismaError = (
   error: Prisma.PrismaClientKnownRequestError
-): IGenericErrorResponse => {
+): TGenericErrorResponse => {
+  let message = "Database Error";
+  let path = "";
+
+  if (error.code === "P2002") {
+    message = "Duplicate value found";
+
+    path =
+      (error.meta?.target as string[])?.join(", ") ?? "";
+  }
+
   return {
-    statusCode: 400,
-    message: error.message,
-    errorDetails: error.meta,
+    statusCode: StatusCodes.BAD_REQUEST,
+    message,
+    errorDetails: [
+      {
+        path,
+        message,
+      },
+    ],
   };
 };
 
