@@ -125,7 +125,37 @@ if (user.status === UserStatus.SUSPENDED) {
   };
 };
 
+const getMe = async (userId: string) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      phone: true,
+      address: true,
+      profileImage: true,
+      role: true,
+      status: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+
+  if (!user) {
+    throw new AppError(
+      StatusCodes.NOT_FOUND,
+      "User not found"
+    );
+  }
+
+  return user;
+};
+
 export const AuthService = {
   registerUser,
-  loginUser
+  loginUser,
+  getMe,
 };

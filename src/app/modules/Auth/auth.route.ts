@@ -1,7 +1,8 @@
 import { Router } from "express";
 import { AuthController } from "./auth.controller";
 import { AuthValidation } from "./auth.validation";
-import { validateRequest } from "../../middleware";
+import { auth, validateRequest } from "../../middleware";
+import { UserRole } from "@prisma/client";
 
 const router = Router();
 
@@ -16,5 +17,12 @@ router.post(
   validateRequest(AuthValidation.loginValidationSchema),
   AuthController.loginUser
 );
+
+router.get(
+  "/me",
+  auth(UserRole.CUSTOMER, UserRole.PROVIDER, UserRole.ADMIN),
+  AuthController.getMe
+);
+
 
 export const AuthRoutes = router;
