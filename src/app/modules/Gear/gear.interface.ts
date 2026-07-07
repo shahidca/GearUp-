@@ -21,3 +21,15 @@ export type TCreateGear = {
 
   categoryId: string;
 };
+
+export type TGearFilterRequest = {
+  searchTerm?: string;
+
+  categoryId?: string;
+
+  condition?: string;
+
+  minPrice?: string;
+
+  maxPrice?: string;
+};
