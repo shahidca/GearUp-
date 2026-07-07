@@ -8,6 +8,7 @@ export const gearSearchableFields = [
 export const gearFilterableFields = [
   "searchTerm",
   "categoryId",
+  "brand",  
   "condition",
   "minPrice",
   "maxPrice",

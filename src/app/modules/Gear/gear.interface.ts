@@ -27,9 +27,19 @@ export type TGearFilterRequest = {
 
   categoryId?: string;
 
-  condition?: string;
+  brand?: string;
+
+  condition?: GearCondition;
 
   minPrice?: string;
 
   maxPrice?: string;
+
+  page?: string;
+
+  limit?: string;
+
+  sortBy?: string;
+
+  sortOrder?: "asc" | "desc";
 };

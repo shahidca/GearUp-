@@ -78,13 +78,112 @@ const createGear = async (user: JwtPayload, payload: TCreateGear) => {
 };
 
 const getAllGear = async (
-  _filters: TGearFilterRequest,
+  filters: TGearFilterRequest,
   paginationOptions: TPaginationReturn
 ) => {
-  const { page, limit, skip } = paginationOptions;
+  const {
+    searchTerm,
+    categoryId,
+    brand,
+    condition,
+    minPrice,
+    maxPrice,
+  } = filters;
+
+  const {
+    page,
+    limit,
+    skip,
+    sortBy,
+    sortOrder,
+  } = paginationOptions;
+
+  const andConditions: Prisma.GearItemWhereInput[] = [];
+
+  // Search
+  if (searchTerm) {
+    andConditions.push({
+      OR: [
+        {
+          name: {
+            contains: searchTerm,
+            mode: "insensitive",
+          },
+        },
+        {
+          brand: {
+            contains: searchTerm,
+            mode: "insensitive",
+          },
+        },
+        {
+          model: {
+            contains: searchTerm,
+            mode: "insensitive",
+          },
+        },
+        {
+          description: {
+            contains: searchTerm,
+            mode: "insensitive",
+          },
+        },
+      ],
+    });
+  }
+
+  // Category Filter
+  if (categoryId) {
+    andConditions.push({
+      categoryId,
+    });
+  }
+
+  // Brand Filter
+  if (brand) {
+    andConditions.push({
+      brand: {
+        equals: brand,
+        mode: "insensitive",
+      },
+    });
+  }
+
+  // Condition Filter
+  if (condition) {
+    andConditions.push({
+      condition,
+    });
+  }
+
+  // Min Price
+  if (minPrice) {
+    andConditions.push({
+      pricePerDay: {
+        gte: new Prisma.Decimal(minPrice),
+      },
+    });
+  }
+
+  // Max Price
+  if (maxPrice) {
+    andConditions.push({
+      pricePerDay: {
+        lte: new Prisma.Decimal(maxPrice),
+      },
+    });
+  }
+
+  const whereConditions: Prisma.GearItemWhereInput =
+    andConditions.length > 0
+      ? {
+          AND: andConditions,
+        }
+      : {};
 
   const [data, total] = await prisma.$transaction([
     prisma.gearItem.findMany({
+      where: whereConditions,
       skip,
       take: limit,
       include: {
@@ -97,12 +196,18 @@ const getAllGear = async (
           },
         },
       },
-      orderBy: {
-        createdAt: "desc",
-      },
+      orderBy: sortBy
+        ? {
+            [sortBy]: sortOrder,
+          }
+        : {
+            createdAt: "desc",
+          },
     }),
 
-    prisma.gearItem.count(),
+    prisma.gearItem.count({
+      where: whereConditions,
+    }),
   ]);
 
   return {
@@ -144,7 +249,7 @@ const getSingleGear = async (id: string) => {
 };
 
 const updateGear = async (user: JwtPayload, id: string, payload: Partial<TCreateGear>) => {
-  
+
   // 1. Check gear exists
   const existingGear = await prisma.gearItem.findUnique({
     where: {
@@ -235,9 +340,43 @@ const updateGear = async (user: JwtPayload, id: string, payload: Partial<TCreate
   return result;
 };
 
+const deleteGear = async (user: JwtPayload, id: string) => {
+  // 1. Check gear exists
+  const gear = await prisma.gearItem.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!gear) {
+    throw new AppError(
+      StatusCodes.NOT_FOUND,
+      "Gear not found"
+    );
+  }
+
+  // 2. Check owner
+  if (gear.providerId !== user.userId) {
+    throw new AppError(
+      StatusCodes.FORBIDDEN,
+      "You are not allowed to delete this gear"
+    );
+  }
+
+  // 3. Delete gear
+  await prisma.gearItem.delete({
+    where: {
+      id,
+    },
+  });
+
+  return null;
+};
+
 export const GearService = {
   createGear,
   getAllGear,
   getSingleGear,
   updateGear,
+  deleteGear,
 };

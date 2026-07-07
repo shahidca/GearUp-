@@ -24,4 +24,8 @@ router.patch("/:id", auth(UserRole.PROVIDER), validateRequest(
   GearController.updateGear
 );
 
+router.delete("/:id", auth(UserRole.PROVIDER),
+  GearController.deleteGear
+);
+
 export const GearRoutes = router;
