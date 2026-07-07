@@ -279,6 +279,58 @@ const createRental = async (
 
 };
 
+const getMyRentals = async (user: JwtPayload) => {
+  const rentals = await prisma.rentalOrder.findMany({
+    where: {
+      customerId: user.userId,
+    },
+    include: {
+      rentalItems: {
+        include: {
+          gearItem: true,
+        },
+      },
+      payment: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return rentals;
+};
+
+const getRentalById = async (
+  user: JwtPayload,
+  rentalId: string
+) => {
+  const rental = await prisma.rentalOrder.findFirst({
+    where: {
+      id: rentalId,
+      customerId: user.userId,
+    },
+    include: {
+      rentalItems: {
+        include: {
+          gearItem: true,
+        },
+      },
+      payment: true,
+    },
+  });
+
+  if (!rental) {
+    throw new AppError(
+      StatusCodes.NOT_FOUND,
+      "Rental not found"
+    );
+  }
+
+  return rental;
+};
+
 export const RentalService = {
   createRental,
+  getMyRentals,
+  getRentalById,
 };

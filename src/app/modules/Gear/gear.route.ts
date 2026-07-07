@@ -18,7 +18,7 @@ router.post("/", auth(UserRole.PROVIDER),
   GearController.createGear
 );
 
-router.patch("/:id", auth(UserRole.PROVIDER), validateRequest(
+router.put("/:id", auth(UserRole.PROVIDER), validateRequest(
   GearValidation.updateGearValidationSchema
   ),
   GearController.updateGear
