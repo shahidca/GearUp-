@@ -4,6 +4,7 @@ import router from "./app/routes";
 import notFound from "./app/middleware/notFound";
 import globalErrorHandler from "./app/errors/globalErrorHandler";
 
+
 const app: Application = express();
 
 // Middlewares
@@ -20,6 +21,7 @@ app.get("/", (req: Request, res: Response) => {
 
 // API Routes
 app.use("/api", router);
+
 
 // Not Found
 app.use(notFound);

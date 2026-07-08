@@ -6,6 +6,8 @@ import { RentalRoutes } from "../modules/Rental";
 import { ProviderRoutes } from "../modules/Provider";
 import { PaymentRoutes } from "../modules/Payment";
 import { ReviewRoutes } from "../modules/Review";
+import { AdminRoutes } from "../modules/Admin";
+
 
 
 
@@ -19,6 +21,7 @@ router.use("/rentals", RentalRoutes);
 router.use("/provider", ProviderRoutes);
 router.use("/payments", PaymentRoutes);
 router.use("/reviews", ReviewRoutes);
+router.use("/admin", AdminRoutes);
 
 
 export default router;
