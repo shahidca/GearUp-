@@ -14,6 +14,28 @@ GitHub Repository:
 
 ---
 
+---
+
+# 🌐 Live API
+
+**Base URL**
+
+https://gearup-api-lso7.onrender.com
+
+---
+
+---
+
+# 📖 API Documentation
+
+### Swagger UI
+
+https://gearup-api-lso7.onrender.com/api/docs
+
+The API documentation is available through Swagger UI, where all endpoints, request bodies, authentication requirements, and responses can be explored and tested.
+
+---
+
 # ✨ Features
 
 ## 🔐 Authentication & Authorization
@@ -185,6 +207,361 @@ src
 ├── app.ts
 └── server.ts
 ```
+
+
+
+# 🚀 API Endpoints
+
+## Authentication
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/api/auth/register` | Register a new user |
+| POST | `/api/auth/login` | Login user |
+| GET | `/api/auth/me` | Get current user profile |
+
+---
+
+## Categories
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/api/categories` | Create Category (Admin) |
+
+---
+
+## Gear
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/api/gear` | Get All Gear |
+| GET | `/api/gear/:id` | Get Single Gear |
+| POST | `/api/gear` | Create Gear |
+| PUT | `/api/gear/:id` | Update Gear |
+| DELETE | `/api/gear/:id` | Delete Gear |
+
+---
+
+## Rentals
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/api/rentals` | Create Rental |
+| GET | `/api/rentals/my-rentals` | Get My Rentals |
+| GET | `/api/rentals/:rentalId` | Rental Details |
+| PATCH | `/api/rentals/:rentalId/confirm` | Confirm Rental |
+| PATCH | `/api/rentals/:rentalId/cancel` | Cancel Rental |
+| PATCH | `/api/rentals/:rentalId/pickup` | Pickup Rental |
+| PATCH | `/api/rentals/:rentalId/return` | Return Rental |
+
+---
+
+## Payments
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/api/payments/create` | Create Payment Intent |
+| POST | `/api/payments/confirm` | Confirm Payment |
+| GET | `/api/payments` | My Payments |
+| GET | `/api/payments/:id` | Payment Details |
+
+---
+
+## Provider
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/api/provider/orders` | Provider Orders |
+| PATCH | `/api/provider/orders/:id` | Update Rental Status |
+
+---
+
+## Reviews
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/api/reviews` | Submit Review |
+
+---
+
+## Admin
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/api/admin/users` | Get All Users |
+| PATCH | `/api/admin/users/:id` | Update User Status |
+| GET | `/api/admin/gear` | Get All Gear |
+| GET | `/api/admin/rentals` | Get All Rentals |
+
+---
+
+# 🔒 Authentication
+
+Protected APIs require a JWT access token.
+
+Example:
+
+```http
+Authorization: Bearer <your_access_token>
+```
+
+---
+
+# ⚙️ Installation
+
+```bash
+git clone https://github.com/shahidca/GearUp-.git
+
+cd GearUp-
+
+npm install
+```
+
+---
+
+# 🔑 Environment Variables
+
+Create a `.env` file and configure:
+
+```env
+NODE_ENV=development
+
+PORT=5000
+
+DATABASE_URL=your_database_url
+
+JWT_ACCESS_SECRET=your_secret
+
+JWT_ACCESS_EXPIRES_IN=7d
+
+BCRYPT_SALT_ROUNDS=10
+
+STRIPE_SECRET_KEY=your_secret_key
+
+STRIPE_WEBHOOK_SECRET=your_webhook_secret
+```
+
+---
+
+# ▶️ Run Project
+
+Development
+
+```bash
+npm run dev
+```
+
+Production Build
+
+```bash
+npm run build
+```
+
+Start Production
+
+```bash
+npm start
+```
+
+---
+
+# 👨‍💻 Admin Credentials
+
+Use the admin account created in your database.
+
+> Email: mdshahidca123@gmail.com
+
+
+
+# 🚀 API Endpoints
+
+## Authentication
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/api/auth/register` | Register a new user |
+| POST | `/api/auth/login` | Login user |
+| GET | `/api/auth/me` | Get current user profile |
+
+---
+
+## Categories
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/api/categories` | Create Category (Admin) |
+
+---
+
+## Gear
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/api/gear` | Get All Gear |
+| GET | `/api/gear/:id` | Get Single Gear |
+| POST | `/api/gear` | Create Gear |
+| PUT | `/api/gear/:id` | Update Gear |
+| DELETE | `/api/gear/:id` | Delete Gear |
+
+---
+
+## Rentals
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/api/rentals` | Create Rental |
+| GET | `/api/rentals/my-rentals` | Get My Rentals |
+| GET | `/api/rentals/:rentalId` | Rental Details |
+| PATCH | `/api/rentals/:rentalId/confirm` | Confirm Rental |
+| PATCH | `/api/rentals/:rentalId/cancel` | Cancel Rental |
+| PATCH | `/api/rentals/:rentalId/pickup` | Pickup Rental |
+| PATCH | `/api/rentals/:rentalId/return` | Return Rental |
+
+---
+
+## Payments
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/api/payments/create` | Create Payment Intent |
+| POST | `/api/payments/confirm` | Confirm Payment |
+| GET | `/api/payments` | My Payments |
+| GET | `/api/payments/:id` | Payment Details |
+
+---
+
+## Provider
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/api/provider/orders` | Provider Orders |
+| PATCH | `/api/provider/orders/:id` | Update Rental Status |
+
+---
+
+## Reviews
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/api/reviews` | Submit Review |
+
+---
+
+## Admin
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/api/admin/users` | Get All Users |
+| PATCH | `/api/admin/users/:id` | Update User Status |
+| GET | `/api/admin/gear` | Get All Gear |
+| GET | `/api/admin/rentals` | Get All Rentals |
+
+---
+
+# 🔒 Authentication
+
+Protected APIs require a JWT access token.
+
+Example:
+
+```http
+Authorization: Bearer <your_access_token>
+```
+
+---
+
+# ⚙️ Installation
+
+```bash
+git clone https://github.com/shahidca/GearUp-.git
+
+cd GearUp-
+
+npm install
+```
+
+---
+
+# 🔑 Environment Variables
+
+Create a `.env` file and configure:
+
+```env
+NODE_ENV=development
+
+PORT=5000
+
+DATABASE_URL=your_database_url
+
+JWT_ACCESS_SECRET=your_secret
+
+JWT_ACCESS_EXPIRES_IN=7d
+
+BCRYPT_SALT_ROUNDS=10
+
+STRIPE_SECRET_KEY=your_secret_key
+
+STRIPE_WEBHOOK_SECRET=your_webhook_secret
+```
+
+---
+
+# ▶️ Run Project
+
+Development
+
+```bash
+npm run dev
+```
+
+Production Build
+
+```bash
+npm run build
+```
+
+Start Production
+
+```bash
+npm start
+```
+
+---
+
+# 👨‍💻 Admin Credentials
+
+Use the admin account created in your database.
+
+> Email: mdshahidca123@gmail.com
+
+> Password: Password@123
+
+---
+
+# 🎥 Demo Video
+
+Demo Video Link:
+
+(Add your video link here)
+
+---
+
+# 👨‍💻 Author
+
+**Md. Shahid Hossain**
+
+Full Stack Web Developer
+
+GitHub:
+https://github.com/shahidca
+
+LinkedIn:
+https://www.linkedin.com/in/md-shahid-hossain-ca
+
+---
+
+> Password: Password@123
+
 
 
 ---
