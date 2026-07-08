@@ -70,10 +70,40 @@ const confirmRental = catchAsync(async (req, res) => {
   });
 });
 
+const pickupRental = catchAsync(async (req, res) => {
+  const result = await RentalService.pickupRental(
+    req.user,
+    req.params.rentalId as string
+  );
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "Rental picked up successfully",
+    data: result,
+  });
+});
+
+const returnRental = catchAsync(async (req, res) => {
+  const result = await RentalService.returnRental(
+    req.user,
+    req.params.rentalId as string
+  );
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "Rental returned successfully",
+    data: result,
+  });
+});
+
 export const RentalController = {
   createRental,
   getMyRentals,
   getRentalById,
   cancelRental,
   confirmRental,
+  pickupRental,
+  returnRental,
 };

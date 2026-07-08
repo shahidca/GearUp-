@@ -5,7 +5,7 @@ import { GearRoutes } from "../modules/Gear";
 import { RentalRoutes } from "../modules/Rental";
 import { ProviderRoutes } from "../modules/Provider";
 import { PaymentRoutes } from "../modules/Payment";
-
+import { ReviewRoutes } from "../modules/Review";
 
 
 
@@ -18,6 +18,7 @@ router.use("/provider/gear", GearRoutes);
 router.use("/rentals", RentalRoutes);
 router.use("/provider", ProviderRoutes);
 router.use("/payments", PaymentRoutes);
+router.use("/reviews", ReviewRoutes);
 
 
 export default router;

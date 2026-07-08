@@ -3,6 +3,7 @@ import { prisma } from "../../config";
 import { TCreateRental } from "./rental.interface";
 import { StatusCodes } from "http-status-codes";
 import AppError from "../../errors/AppError";
+import { RentalStatus } from "@prisma/client";
 
 
 const createRental = async (
@@ -471,10 +472,149 @@ const confirmRental = async (
   return result;
 };
 
+const pickupRental = async (
+  user: JwtPayload,
+  rentalId: string
+) => {
+  const rental = await prisma.rentalOrder.findUnique({
+    where: {
+      id: rentalId,
+    },
+    include: {
+      rentalItems: {
+        include: {
+          gearItem: true,
+        },
+      },
+    },
+  });
+
+  if (!rental) {
+    throw new AppError(
+      StatusCodes.NOT_FOUND,
+      "Rental not found"
+    );
+  }
+
+  const isProviderOwner = rental.rentalItems.every(
+    (item) => item.gearItem.providerId === user.userId
+  );
+
+  if (!isProviderOwner) {
+    throw new AppError(
+      StatusCodes.FORBIDDEN,
+      "You are not authorized to update this rental"
+    );
+  }
+
+  if (rental.status !== RentalStatus.CONFIRMED) {
+    throw new AppError(
+      StatusCodes.BAD_REQUEST,
+      "Rental must be CONFIRMED before pickup"
+    );
+  }
+
+  return await prisma.rentalOrder.update({
+    where: {
+      id: rentalId,
+    },
+    data: {
+      status: RentalStatus.PICKED_UP,
+      pickupDate: new Date(),
+    },
+    include: {
+      rentalItems: {
+        include: {
+          gearItem: true,
+        },
+      },
+    },
+  });
+};
+
+const returnRental = async (
+  user: JwtPayload,
+  rentalId: string
+) => {
+  const rental = await prisma.rentalOrder.findUnique({
+    where: {
+      id: rentalId,
+    },
+    include: {
+      rentalItems: {
+        include: {
+          gearItem: true,
+        },
+      },
+    },
+  });
+
+  if (!rental) {
+    throw new AppError(
+      StatusCodes.NOT_FOUND,
+      "Rental not found"
+    );
+  }
+
+  const isProviderOwner = rental.rentalItems.every(
+    (item) => item.gearItem.providerId === user.userId
+  );
+
+  if (!isProviderOwner) {
+    throw new AppError(
+      StatusCodes.FORBIDDEN,
+      "You are not authorized to update this rental"
+    );
+  }
+
+  if (rental.status !== RentalStatus.PICKED_UP) {
+    throw new AppError(
+      StatusCodes.BAD_REQUEST,
+      "Rental must be PICKED_UP before return"
+    );
+  }
+
+  const result = await prisma.$transaction(async (tx) => {
+    for (const item of rental.rentalItems) {
+      await tx.gearItem.update({
+        where: {
+          id: item.gearItemId,
+        },
+        data: {
+          availableStock: {
+            increment: item.quantity,
+          },
+        },
+      });
+    }
+
+    return await tx.rentalOrder.update({
+      where: {
+        id: rentalId,
+      },
+      data: {
+        status: RentalStatus.RETURNED,
+        returnDate: new Date(),
+      },
+      include: {
+        rentalItems: {
+          include: {
+            gearItem: true,
+          },
+        },
+      },
+    });
+  });
+
+  return result;
+};
+
 export const RentalService = {
   createRental,
   getMyRentals,
   getRentalById,
   cancelRental,
   confirmRental,
+  pickupRental,
+  returnRental,
 };

@@ -38,4 +38,16 @@ router.patch(
   RentalController.cancelRental
 );
 
+router.patch(
+  "/:rentalId/pickup",
+  auth(UserRole.PROVIDER),
+  RentalController.pickupRental
+);
+
+router.patch(
+  "/:rentalId/return",
+  auth(UserRole.PROVIDER),
+  RentalController.returnRental
+);
+
 export const RentalRoutes = router;
