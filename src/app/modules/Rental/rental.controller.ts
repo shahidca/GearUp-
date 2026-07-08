@@ -42,8 +42,38 @@ const getRentalById = catchAsync(async (req, res) => {
   });
 });
 
+const cancelRental = catchAsync(async (req, res) => {
+  const result = await RentalService.cancelRental(
+    req.user,
+    req.params.rentalId as string
+  );
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "Rental cancelled successfully",
+    data: result,
+  });
+});
+
+const confirmRental = catchAsync(async (req, res) => {
+  const result = await RentalService.confirmRental(
+    req.user,
+    req.params.rentalId as string
+  );
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: "Rental confirmed successfully",
+    data: result,
+  });
+});
+
 export const RentalController = {
   createRental,
   getMyRentals,
   getRentalById,
+  cancelRental,
+  confirmRental,
 };

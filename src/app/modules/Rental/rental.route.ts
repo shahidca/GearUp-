@@ -25,4 +25,17 @@ router.get("/my-rentals", auth(UserRole.CUSTOMER),
 router.get("/:rentalId", auth(UserRole.CUSTOMER),
   RentalController.getRentalById
 );
+
+router.patch(
+  "/:rentalId/confirm",
+  auth(UserRole.PROVIDER),
+  RentalController.confirmRental
+);
+
+router.patch(
+  "/:rentalId/cancel",
+  auth(UserRole.CUSTOMER),
+  RentalController.cancelRental
+);
+
 export const RentalRoutes = router;

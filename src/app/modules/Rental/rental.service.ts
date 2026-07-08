@@ -329,8 +329,152 @@ const getRentalById = async (
   return rental;
 };
 
+const cancelRental = async (
+  user: JwtPayload,
+  rentalId: string
+) => {
+  // Find Rental
+  const rental = await prisma.rentalOrder.findFirst({
+    where: {
+      id: rentalId,
+      customerId: user.userId,
+    },
+    include: {
+      rentalItems: true,
+    },
+  });
+
+  if (!rental) {
+    throw new AppError(
+      StatusCodes.NOT_FOUND,
+      "Rental not found"
+    );
+  }
+
+  // Only PLACED rental can be cancelled
+  if (rental.status !== "PLACED") {
+    throw new AppError(
+      StatusCodes.BAD_REQUEST,
+      "Only placed rentals can be cancelled"
+    );
+  }
+
+  const result = await prisma.$transaction(async (tx) => {
+    // Restore Stock
+    for (const item of rental.rentalItems) {
+      await tx.gearItem.update({
+        where: {
+          id: item.gearItemId,
+        },
+        data: {
+          availableStock: {
+            increment: item.quantity,
+          },
+        },
+      });
+    }
+
+    // Update Rental Status
+    const updatedRental = await tx.rentalOrder.update({
+      where: {
+        id: rental.id,
+      },
+      data: {
+        status: "CANCELLED",
+      },
+      include: {
+        rentalItems: {
+          include: {
+            gearItem: true,
+          },
+        },
+        payment: true,
+      },
+    });
+
+    return updatedRental;
+  });
+
+  return result;
+};
+
+const confirmRental = async (
+  user: JwtPayload,
+  rentalId: string
+) => {
+  // Find Rental
+  const rental = await prisma.rentalOrder.findUnique({
+    where: {
+      id: rentalId,
+    },
+    include: {
+      rentalItems: {
+        include: {
+          gearItem: true,
+        },
+      },
+    },
+  });
+
+  if (!rental) {
+    throw new AppError(
+      StatusCodes.NOT_FOUND,
+      "Rental not found"
+    );
+  }
+
+  // Rental must contain at least one item
+  if (rental.rentalItems.length === 0) {
+    throw new AppError(
+      StatusCodes.BAD_REQUEST,
+      "Rental has no items"
+    );
+  }
+
+  // Check Provider Ownership
+  const isProviderOwner = rental.rentalItems.every(
+    (item) => item.gearItem.providerId === user.userId
+  );
+
+  if (!isProviderOwner) {
+    throw new AppError(
+      StatusCodes.FORBIDDEN,
+      "You are not authorized to confirm this rental"
+    );
+  }
+
+  // Already confirmed
+  if (rental.status !== "PLACED") {
+    throw new AppError(
+      StatusCodes.BAD_REQUEST,
+      `Rental already ${rental.status.toLowerCase()}`
+    );
+  }
+
+  // Update Status
+  const result = await prisma.rentalOrder.update({
+    where: {
+      id: rental.id,
+    },
+    data: {
+      status: "CONFIRMED",
+    },
+    include: {
+      rentalItems: {
+        include: {
+          gearItem: true,
+        },
+      },
+    },
+  });
+
+  return result;
+};
+
 export const RentalService = {
   createRental,
   getMyRentals,
   getRentalById,
+  cancelRental,
+  confirmRental,
 };
